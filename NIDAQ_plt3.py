@@ -18,7 +18,7 @@ import time, datetime, os, serial#import matplotlib.pyplot as plt
 #from matplotlib import animation
 #import numpy as np
 
-ser = serial.Serial('COM5', 9600, timeout=1)
+#ser = serial.Serial('COM3', 9600, timeout=1)
 
 # In[]
 class AI():  
@@ -27,7 +27,7 @@ class AI():
         global FileName1
         global VoltageFile
     
-        FolderName1='C:/Users/lab'
+        FolderName1='C:/Users/hirof/Documents/python/gui_electroporation'
         # FolderName1='C:/Users/lab.LABNOTE/Documents'
             
         FolderName1=FolderName1+"/"+str(datetime.datetime.today().strftime("%Y%m%d"))
@@ -115,7 +115,7 @@ class AI():
             y.extend(task.read(number_of_samples_per_channel=1))
             return(x,y)
 
-    def NIDAQ_Stream():
+    def NIDAQ_Stream(num_ch,num_smpl,rate):
         import numpy
         import nidaqmx
         from nidaqmx.stream_readers import (AnalogSingleChannelReader, AnalogMultiChannelReader)
@@ -124,21 +124,45 @@ class AI():
         
         #from nidaqmx.tests.fixtures import x_series_device
         #        import nidaqmx.task as task
-        data= numpy.zeros((3,100), dtype=numpy.float64)
+        data= numpy.zeros((num_ch,num_smpl), dtype=numpy.float64)
+        with nidaqmx.Task() as read_task:
+            read_task.ai_channels.add_ai_voltage_chan("Dev2/ai0:" + str(num_ch-1),
+                                             terminal_config=nidaqmx.constants.TerminalConfiguration.RSE)
+
+            read_task.timing.cfg_samp_clk_timing(rate,samps_per_chan=num_smpl)
+            #ead_task.triggers.start_trigger.cfg_dig_edge_start_trig(trigger_source="/Dev2/PFI0")
+            #read_task.timing.delay_from_samp_clk_delay=0
+            #s=nidaqmx.stream_readers.AnalogMultiChannelReader()
+            
+            reader=AnalogMultiChannelReader(read_task.in_stream)
+            reader.read_many_sample(data,timeout=num_smpl/rate+1)
+            # print(data)
+            return(data)
+    def NIDAQ_Trigger():
+        import numpy
+        import nidaqmx
+        from nidaqmx.stream_readers import (AnalogSingleChannelReader,
+                                            AnalogMultiChannelReader)
+        from nidaqmx.constants import (Edge, Slope)
+        from nidaqmx._task_modules.triggering.start_trigger import StartTrigger
+        
+        #from nidaqmx.tests.fixtures import x_series_device
+        #        import nidaqmx.task as task
+        data= numpy.zeros((3,1000), dtype=numpy.float64)
         
         with nidaqmx.Task() as read_task:
             read_task.ai_channels.add_ai_voltage_chan("Dev2/ai0:2",
                                              terminal_config=nidaqmx.constants.TerminalConfiguration.RSE)
 
-            read_task.timing.cfg_samp_clk_timing(1e4, active_edge=Edge.RISING,samps_per_chan=100)
+            read_task.timing.cfg_samp_clk_timing(1e4, active_edge=Edge.RISING,samps_per_chan=1000)
             read_task.triggers.start_trigger.cfg_dig_edge_start_trig(trigger_source="/Dev2/PFI0")
             #read_task.timing.delay_from_samp_clk_delay=0
             #s=nidaqmx.stream_readers.AnalogMultiChannelReader()
             
             reader=AnalogMultiChannelReader(read_task.in_stream)
-            reader.read_many_sample(data, number_of_samples_per_channel=100,timeout=10)
+            reader.read_many_sample(data, number_of_samples_per_channel=1000,timeout=1)
             # print(data)
-            return(data)
+            return(data)       
     def NIDAQ_DO():
         import nidaqmx
         from nidaqmx.constants import LineGrouping
