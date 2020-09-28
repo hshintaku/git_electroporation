@@ -8,7 +8,7 @@ import time
 from PyQt5 import QtWidgets, QtCore
 from gui_ui import Ui_MainWindow
 from matplotlibwidget import MatplotlibWidget
-import visa
+import pyvisa as visa
 class wavefunc():
     def wf1974(voltage, pulse,period,num_cycl):
 #        import visa
@@ -46,11 +46,12 @@ class MainWindow(QtWidgets.QMainWindow):
         ui = Ui_MainWindow()
         ui.setupUi(self)
         ui.graphwidget= MatplotlibWidget(ui.centralwidget,title='', xlabel='Time', ylabel='Voltage',
-                 xlim=None, ylim=None, xscale='linear', yscale='linear',
+                 xscale='linear', yscale='linear',
                  width=8, height=3, dpi=100)
+        #ui.graphwidget= MatplotlibWidget(ui.centralwidget,height=3)
 
         #ui.graphwidget.axes1 = ui.graphwidget.figure.add_subplot(121)  
-        ui.graphwidget.axes2 = ui.graphwidget.figure.add_subplot(111)
+        ui.graphwidget.axes = ui.graphwidget.figure.add_subplot(121)
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.update_figure)
         timer.start(50)
@@ -82,12 +83,13 @@ class MainWindow(QtWidgets.QMainWindow):
         import time
         smpltime=time.time()
         data=NI.NIDAQ_Stream(ui.ch_num,ui.smpl,ui.rate)    
-        ui.graphwidget.axes2.clear()
+        ui.graphwidget.axes.clear()
+        
         ui.graphwidget.x  = np.arange(0,ui.smpl,1)
         # plot ch0,1,2
         for counter2 in range(0,ui.ch_num-1):
             ui.graphwidget.y  = data[counter2]
-            ui.graphwidget.axes2.plot(ui.graphwidget.x,ui.graphwidget.y)
+            ui.graphwidget.axes.plot(ui.graphwidget.x,ui.graphwidget.y)
         ui.graphwidget.draw()  
         if ui.save == True:
           

@@ -166,7 +166,8 @@ class AI():
     def NIDAQ_DO():
         import nidaqmx
         from nidaqmx.constants import LineGrouping
-        import visa, time
+        import pyvisa as visa
+        import time
         rm = visa.ResourceManager()
         wv = rm.get_instrument("USB0::0x0D4A::0x000D::9148960::INSTR")
         wv.write(':TRIGger1:SEQuence:IMMediate')
