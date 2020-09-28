@@ -16,7 +16,7 @@ class wavefunc():
 #        float width1; float width2
         rm = visa.ResourceManager()
         # wv = rm.get_instrument("USB0::0x0D4A::0x000E::9137840::INSTR")
-        wv = rm.get_instrument("USB0::0x0D4A::0x000D::9148960::INSTR")
+        wv = rm.open_resource("USB0::0x0D4A::0x000D::9148960::INSTR")
         #print(wv.query('*IDN?'))
         wv.write(':SOURce1:VOLTage:LEVel:IMMediate:AMPLitude '+ str(voltage) +'; OFFSet '+ str(voltage/2))
         # wv.write(':SOURce2:VOLTage:LEVel:IMMediate:AMPLitude 5.0; OFFSet 2.5')
@@ -47,11 +47,11 @@ class MainWindow(QtWidgets.QMainWindow):
         ui.setupUi(self)
         ui.graphwidget= MatplotlibWidget(ui.centralwidget,title='', xlabel='Time', ylabel='Voltage',
                  xscale='linear', yscale='linear',
-                 width=8, height=3, dpi=100)
+                 width=13, height=3, dpi=100)
         #ui.graphwidget= MatplotlibWidget(ui.centralwidget,height=3)
 
         #ui.graphwidget.axes1 = ui.graphwidget.figure.add_subplot(121)  
-        ui.graphwidget.axes = ui.graphwidget.figure.add_subplot(121)
+        #ui.graphwidget.axes = ui.graphwidget.figure.add_subplot(121)
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.update_figure)
         timer.start(50)
@@ -146,7 +146,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def slot5(self):
         #import pyvisa
         rm = visa.ResourceManager()
-        wv = rm.get_instrument("USB0::0x0D4A::0x000D::9148960::INSTR")
+        wv = rm.open_resource("USB0::0x0D4A::0x000D::9148960::INSTR")
         wv.write("*TRG")
         
         # NI.ArduinoDP(4,interval,1,number)
@@ -158,8 +158,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ui.lcdNumber_4.display(ui.horizontalSlider_4.value())
         ui.value = int(ui.horizontalSlider_1.value()*5000/99)
         #time.sleep(1)
-        #ui.statusBar.showMessage(ui.horizontalSlider_1.value())
-       
+        #ui.statusBar.showMessage(ui.horizontalSlider_1.value()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
