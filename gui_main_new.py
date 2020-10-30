@@ -33,7 +33,8 @@ class wavefunc():
         # wv.write(':SOURce2:PULSe:WIDTh '+str(width2)+'ms')#control the pulse width of output two
         wv.write(':SOURce1:BURSt:TGATe:OSTop CYCLe')
         # wv.write(':SOURce2:BURSt:TGATe:OSTop CYCLe')
-        # wv.write(':SOURce2:BURSt:SLEVel 100PCT')
+        wv.write(':SOURce1:BURSt:SLEVel:STATe ON')
+        wv.write(':SOURce1:BURSt:SLEVel -100PCT')
         # wv.write(':SOURce2:PHAse:ADJust -180DEG')
         wv.write(':SOURce1:BURSt:TDELay 400ms')
         # wv.write(':SOURce2:BURSt:TDELay '+str(delay)+'ms')
