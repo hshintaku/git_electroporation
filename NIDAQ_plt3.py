@@ -22,19 +22,18 @@ import time, datetime, os, serial#import matplotlib.pyplot as plt
 
 # In[]
 class AI():  
-    def DefFile(): # Making Folder for saving this result
+    def DefFile(filepath,filename_user): # Making Folder for saving this result
         global FolderName1
         global FileName1
         global VoltageFile
     
-        FolderName1='C:/Users/Lab/Documents/python/git_electroporation'
+        FolderName1 = filepath
         # FolderName1='C:/Users/lab.LABNOTE/Documents'
             
         FolderName1=FolderName1+"/"+str(datetime.datetime.today().strftime("%Y%m%d"))
         os.makedirs(FolderName1,exist_ok=True)
         
-        FileName=str(datetime.datetime.
-                     
+        FileName=str(filename_user + datetime.datetime.
                      today().strftime("%Y%m%d_%H%M%S"))+'_exp'
         FileName1=FolderName1+"/"+FileName+str(1+len([x for x in os.listdir(FolderName1) if x.endswith(".csv")])).zfill(4)
         return(FileName1)
@@ -138,6 +137,7 @@ class AI():
             reader.read_many_sample(data,timeout=num_smpl/rate+1)
             # print(data)
             return(data)
+        
     def NIDAQ_Trigger():
         import numpy
         import nidaqmx
@@ -149,7 +149,6 @@ class AI():
         #from nidaqmx.tests.fixtures import x_series_device
         #        import nidaqmx.task as task
         data= numpy.zeros((3,1000), dtype=numpy.float64)
-        
         with nidaqmx.Task() as read_task:
             read_task.ai_channels.add_ai_voltage_chan("Dev1/ai0:2",
                                              terminal_config=nidaqmx.constants.TerminalConfiguration.RSE)
@@ -162,7 +161,9 @@ class AI():
             reader=AnalogMultiChannelReader(read_task.in_stream)
             reader.read_many_sample(data, number_of_samples_per_channel=1000,timeout=1)
             # print(data)
-            return(data)       
+            return(data)
+        
+        
     def NIDAQ_DO():
         import nidaqmx
         from nidaqmx.constants import LineGrouping
