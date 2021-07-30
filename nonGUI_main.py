@@ -109,7 +109,7 @@ def job():
 # Main
 
 # Set parameters
-voltage=5   # [V]
+voltage=4   # [V]
 pulse=5     # [ms]
 frequency=20    # [Hz]
 period=1000/frequency
@@ -127,13 +127,13 @@ count = 0
 wavefunc.wf1974(voltage, pulse, period,num_cycl)
 
 # Set sheduled job
-schedule.every(2).hour.do(job)
+schedule.every(2).hours.do(job)
 
 plt.figure()
 
-time.sleep(60)
-print('Start firts ELP')
-job()
+#time.sleep(60)
+#print('Start firts ELP')
+#job()
 
 while True:
     schedule.run_pending()
