@@ -20,8 +20,7 @@ class wavefunc():
 #        float exposure
 #        float width1; float width2
         rm = visa.ResourceManager()
-        # wv = rm.get_instrument("USB0::0x0D4A::0x000E::9137840::INSTR")
-        wv = rm.open_resource("USB0::0x0D4A::0x000D::9148960::INSTR")
+        wv = rm.open_resource("USB0::0x0D4A::0x000E::9334150::INSTR")
         #print(wv.query('*IDN?'))
         wv.write(':SOURce1:VOLTage:LEVel:IMMediate:AMPLitude '+ str(voltage) +'; OFFSet '+ str(voltage/2))
         # wv.write(':SOURce2:VOLTage:LEVel:IMMediate:AMPLitude 5.0; OFFSet 2.5')
@@ -54,12 +53,12 @@ def update_figure(ch_num,smpl,rate):
 
 def NF_triger():
     rm = visa.ResourceManager()
-    wv = rm.open_resource("USB0::0x0D4A::0x000D::9148960::INSTR")
+    wv = rm.open_resource("USB0::0x0D4A::0x000E::9334150::INSTR")
     wv.write("*TRG")
     print("Trigerred")
     
 def DefFile(): # Making Folder for saving this result
-    FolderName1 = 'C:/Users/Lab/Documents/Github/git_electroporation/Data'        
+    FolderName1 = './Data'        
     FolderName1=FolderName1+"/"+str(datetime.datetime.today().strftime("%Y%m%d"))
     os.makedirs(FolderName1,exist_ok=True)
     FileName=str(datetime.datetime.
@@ -113,7 +112,7 @@ voltage=4   # [V]
 pulse=5     # [ms]
 frequency=20    # [Hz]
 period=1000/frequency
-num_cycl=100
+num_cycl=1000
 duration_rec = int(num_cycl/frequency)
 
 ch_num=3
@@ -123,11 +122,15 @@ smpl=1000
 save = False
 count = 0
 
+# Time-lapse trigger
+TimelapseFlag = True
+
 # Send to function generator
 wavefunc.wf1974(voltage, pulse, period,num_cycl)
 
 # Set sheduled job
-schedule.every(2).hours.do(job)
+if TimelapseFlag:
+    schedule.every(1).minutes.do(job)
 
 plt.figure()
 
@@ -136,7 +139,8 @@ plt.figure()
 #job()
 
 while True:
-    schedule.run_pending()
+    if TimelapseFlag:
+        schedule.run_pending()
     
     # Plot
     x = np.arange(0,smpl,1)
@@ -150,7 +154,7 @@ while True:
     time_remain = schedule.idle_seconds()
     print('Next: '+str(time_remain)+'sec')
             
-    plt.pause(1)
+    plt.pause(0.1)
     plt.cla()
 
 

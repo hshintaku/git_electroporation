@@ -108,7 +108,7 @@ class AI():
     def NIDAQAI(x,y):
         import nidaqmx
         with nidaqmx.Task() as task:
-            task.ai_channels.add_ai_voltage_chan("Dev1/ai0:3",
+            task.ai_channels.add_ai_voltage_chan("Dev4/ai0:3",
                                                     terminal_config=nidaqmx.constants.TerminalConfiguration.RSE)
             x.append(time.time())
             y.extend(task.read(number_of_samples_per_channel=1))
@@ -125,7 +125,7 @@ class AI():
         #        import nidaqmx.task as task
         data= numpy.zeros((num_ch,num_smpl), dtype=numpy.float64)
         with nidaqmx.Task() as read_task:
-            read_task.ai_channels.add_ai_voltage_chan("Dev1/ai0:" + str(num_ch-1),
+            read_task.ai_channels.add_ai_voltage_chan("Dev4/ai0:" + str(num_ch-1),
                                              terminal_config=nidaqmx.constants.TerminalConfiguration.RSE)
 
             read_task.timing.cfg_samp_clk_timing(rate,samps_per_chan=num_smpl)
