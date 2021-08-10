@@ -28,14 +28,13 @@ class AI():
         global VoltageFile
     
         FolderName1 = filepath
-        # FolderName1='C:/Users/lab.LABNOTE/Documents'
             
         FolderName1=FolderName1+"/"+str(datetime.datetime.today().strftime("%Y%m%d"))
         os.makedirs(FolderName1,exist_ok=True)
         
-        FileName=str(filename_user + datetime.datetime.
+        FileName=str(filename_user + '_' + datetime.datetime.
                      today().strftime("%Y%m%d_%H%M%S"))+'_exp'
-        FileName1=FolderName1+"/"+FileName+str(1+len([x for x in os.listdir(FolderName1) if x.endswith(".csv")])).zfill(4)
+        FileName1=FolderName1+"/"+FileName+str(1+len([x for x in os.listdir(FolderName1) if x.endswith(".csv")])).zfill(4) + '.csv'
         return(FileName1)
         
 
